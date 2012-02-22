@@ -13,25 +13,41 @@ module ActsAsCsv
   module InstanceMethods
  
     def read
-      @csvContents = []
+      @csvContents=[]
       fileName = self.class.to_s.downcase + '.txt'
       file = File.new(fileName)
-      @headers = file.gets.chomp.split(',')
-   
-      file.each do|row|
-        @csvContents << row.chomp.split(',')
-      end
+      headers = file.gets.chomp.split(",")
+      file.each do|line|
+        row = line.chomp.split(",")
+        hash = { }
+        row.each do |item|
+		key = headers[row.index(item)]
+                hash[key.to_s] = item 
+            end
+    	@csvContents.push(Row.new(hash))
     end
+ end
 
-    attr_accessor :headers, :csvContents
-    
+   attr_accessor :csvContents
 
-    def method_missing(name, *args)
-      puts @csvContents[@headers.index name.to_s]
-    end
+    def each(&block)
+        @csvContents.each &block
+    end    
+
     def initialize
       read
     end
+  end
+end
+
+class Row 
+  attr_accessor :hash
+  def initialize(value)
+     @hash = value
+  end	
+
+  def method_missing(name, *args) 
+     hash[name.to_s]
   end
 end
 
@@ -41,5 +57,4 @@ class ReadCsv
 end
 
 reader = ReadCsv.new
-puts reader.title
-puts reader.length
+reader.each {|row| p " #{row.title} - #{row.length}"}
