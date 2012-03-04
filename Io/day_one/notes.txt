@@ -1,5 +1,0 @@
-Om man inte har klasser måste språket vara väldigt weakly typed?
-Behöver man kod för att visa detta?
-
-
-
