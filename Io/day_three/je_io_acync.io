@@ -10,3 +10,8 @@ inspect := method(f := asyncGet;
 	)
 
 inspect
+
+# Current type : FutureProxy
+# Soon opening
+# wrote to file
+# Type after access : File
