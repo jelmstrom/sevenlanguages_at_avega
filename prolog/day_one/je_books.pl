@@ -1,4 +1,5 @@
 book(lotr,tolkien).
 book(hitchikers_guide, adams).
-book(dual,[one, two]).
-%--  author(X,Y) :- book(Z,Y), book(X,Y). member ?
+book(patterns,[gamma, vlissides, helm, johnson]).
+%-- author(Y) :- book(Z,Y).
+%-- author(Y) :- book(_,X),  k=X, member(Y,k).
