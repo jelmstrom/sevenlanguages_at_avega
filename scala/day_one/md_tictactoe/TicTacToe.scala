@@ -19,15 +19,17 @@ object TicTacToe extends Application {
 
   println("Game 2 xxxxxxxxxxxxxxxx")
   val board2 = Board
-
   board2.placeMarker(Xmarker(), Coordinate(1, 1))
-  board2.placeMarker(Xmarker(), Coordinate(2, 2))
+  board2.placeMarker(Xmarker(), Coordinate(1, 2))
+  board2.placeMarker(Omarker(), Coordinate(1, 3))
+  board2.placeMarker(Omarker(), Coordinate(2, 1))
+  board2.placeMarker(Omarker(), Coordinate(2, 2))
+  board2.placeMarker(Xmarker(), Coordinate(2, 3))
+  board2.placeMarker(Xmarker(), Coordinate(3, 1))
+  board2.placeMarker(Xmarker(), Coordinate(3, 2))
+  board2.placeMarker(Omarker(), Coordinate(3, 3))
 
-  board2.placeMarker(Xmarker(), Coordinate(3, 3))
   assertResult(board2.evaluateWinner())
-
-
-
 }
 
 abstract class Result()

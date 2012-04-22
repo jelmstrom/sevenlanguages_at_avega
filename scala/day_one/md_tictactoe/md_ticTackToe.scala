@@ -38,7 +38,9 @@ object Board {
           case _ => println("No winner yet, continue")
         }
     }
-    result
+    result match {
+      case NotFinished() => return new Draw
+    }
   }
 
   def evaluatePossibleWinner(possibleWinner: List[Coordinate]): Result = {
