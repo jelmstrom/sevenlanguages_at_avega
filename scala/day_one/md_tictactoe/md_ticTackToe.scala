@@ -2,11 +2,11 @@ import collection.immutable.HashMap
 
 case class Coordinate(row: Int, col: Int)
 
-abstract case class Marker(mark: String)
+abstract case class Marker()
 
-case class Xmarker() extends Marker(mark = "X")
+case class Xmarker() extends Marker
 
-case class Omarker() extends Marker(mark = "O")
+case class Omarker() extends Marker
 
 object Board {
   val row1 = List(Coordinate(1, 1), Coordinate(1, 2), Coordinate(1, 3))
