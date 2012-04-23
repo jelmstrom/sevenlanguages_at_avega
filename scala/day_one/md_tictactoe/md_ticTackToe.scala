@@ -39,7 +39,7 @@ object Board {
         }
     }
     result match {
-      case NotFinished() => return new Draw
+      case NotFinished() => new Draw
     }
   }
 
