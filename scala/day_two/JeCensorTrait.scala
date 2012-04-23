@@ -1,12 +1,13 @@
-
+import io.Source
+import java.io.File
 
 class UncensoredReader {
 
-    def readText(): List[String]= {
-        List("I", "read", "lots" , "of", "Strings", "from", "the", "Internet")
+   val text =  Source.fromFile("je_scala.txt").mkString
+
+    def read(): String= {
+         text
     }
-
-
 
 }
 
@@ -14,14 +15,19 @@ class UncensoredReader {
 
 trait Censor extends UncensoredReader {
 
-  var censoredWords = Map("I" -> "Our glorified leader", "Strings"->"information", "Internet" -> "Party Library")
+  val censoredWords = Map("I" -> "Our glorified leader", "Strings"->"information", "Internet" -> "Party Library")
 
-  override def readText(): List[String] = {
-    super.readText map (word => applyCensorship(word))
+  override def read(): String = {
+    val censored = censorText(text.split(" ").iterator.toList)
+    censored.foldLeft("")((result : String, item :String) => result + " " + item)
+  }
+  def censorText(words: scala.List[String]):List[String] = {
+    words map (word => applyCensorship(word))
   }
 
+
   def applyCensorship(word : String): String = {
-     val replacement: Iterable[String]= censoredWords filter (_._1 equals word) map(_._2)
+     val replacement: Iterable[String]= censoredWords filter (_._1 equalsIgnoreCase word) map(_._2)
      if (!replacement.isEmpty)   {
       return replacement.last
      }
@@ -31,5 +37,6 @@ trait Censor extends UncensoredReader {
 }
 
 
-println(new UncensoredReader().readText())
-println((new UncensoredReader with Censor).readText())
+println(new UncensoredReader().read())
+println((new UncensoredReader with Censor).read())
+
