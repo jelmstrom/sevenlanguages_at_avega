@@ -15,14 +15,15 @@ object PageLoader {
     foundMatches.size
   }
   def getListOfLinks(url : String): List[String] = {
-    // href="http://www.arla.se"
+    // href="http://www.arla.se" bla bla href="http://www.amazon.com/access"> and som
     // href="/relative/path.html" och lite till href="http://my.com"
+    // <link rel="stylesheet" type="text/css" href="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/accessoriesCSS/US/combined-3689044428._V189697042_.css" /><script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/tmmJS/tmmJS-combined-core-65345._V1_.js" />   <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/twister/beta/twister-dpf.cc9fb73adcb35a017570bfa9a4964009._V1_.js"/>  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/cmuAnnotations/cmuAnnotations-cmuAnnotations-49800._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/accessoriesJS/accessoriesJS-accessories-49340._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/lazyLoadLib/lazyLoadLib-lazyLoadLib-1454._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/priceformatterJQ/priceformatterJQ-price-21701._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/x-locale/communities/profile/customer-popover/script-13-min._V224617671_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/x-locale/personalization/yourstore/js/ratings-bar-366177._V204593665_.js" />');
     val reg = """href=\s*\"(\S+)""".r
     val pageText = Source.fromURL(url).mkString
     println(pageText)
     val foundHrefs : MatchIterator = reg.findAllIn(pageText)
     // length !!!!!
-    println("Found: " + foundHrefs.hasNext)
+    //println("Found: " + foundHrefs.hasNext)
     var listOfHrefs : List[String] = Nil
 
     while (foundHrefs.hasNext) {
@@ -34,10 +35,13 @@ object PageLoader {
 }
 // END:loader
 
-val urls = List("http://www.amazon.com/",
-  "http://www.twitter.com/",
-  "http://www.google.com/",
-  "http://www.cnn.com/" )
+//val urls = List("http://www.amazon.com/",
+//  "http://www.twitter.com/",
+//  "http://www.google.com/",
+//  "http://www.cnn.com/" )
+
+//val urls = List("http://www.amazon.com/")
+val urls = List("http://www.google.com/")
 
 // START:time
 def timeMethod(method: () => Unit) = {
@@ -72,6 +76,8 @@ def getPageSizeConcurrently() = {
   }
 }
 
+case class ListOfUrls(url : String,  linkUrls : List[String])
+
 // START:concurrent
 def getTotalPageSizeConcurrently() = {
   val caller = self
@@ -82,8 +88,13 @@ def getTotalPageSizeConcurrently() = {
 
   for(i <- 1 to urls.size) {
     receive {
-      case (url, linkUrls) =>
-        //linkUrls.foreach(linkUrl => println("Size for " + linkUrl + ": " + size))
+      case (url, linkUrls : List[String]) =>
+        val filteredUrls = linkUrls.filter(link => link.startsWith("http"))
+        println("Recieved: "  + filteredUrls)
+        filteredUrls.foreach { linkUrl =>
+          actor { caller ! (linkUrl, PageLoader.getPageSize(linkUrl))}
+        }
+
     }
   }
 }
@@ -111,7 +122,7 @@ println("Sequential run:")
 //timeMethod { getPageSizeSequentially }
 
 println("Concurrent run")
-//getNumberOfLinksInPage()
-PageLoader.getListOfLinks("http://www.amazon.com").foreach(url => println(url))
+getTotalPageSizeConcurrently()
+//PageLoader.getListOfLinks("http://www.amazon.com").foreach(url => println(url))
 //timeMethod { getPageSizeConcurrently }
 // END:script
