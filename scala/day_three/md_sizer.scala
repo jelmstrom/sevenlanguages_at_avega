@@ -34,7 +34,7 @@ object PageLoader {
 
   def getListOfLinks(url: String): List[String] = {
     val pageText = Source.fromURL(url).mkString
-    println(pageText)
+    //println(pageText)
     val foundHrefs: MatchIterator = HREF_REGEXP.findAllIn(pageText)
     extractUrlsFromHrefs(foundHrefs.toList)
   }
@@ -48,7 +48,7 @@ object PageLoader {
 //  "http://www.cnn.com/" )
 
 //val urls = List("http://www.google.com/")
-val urls = List("http://www.google.com/")
+val urls = List("http://www.cnn.com/")
 
 // START:time
 def timeMethod(method: () => Unit) = {
@@ -88,7 +88,7 @@ def getPageSizeConcurrently() = {
 // START:concurrent
 def getTotalPageSizeConcurrently() = {
   val caller = self
-
+  var totalSize = 0
   for (url <- urls) {
     actor {
       caller !(url, PageLoader.getListOfLinks(url))
@@ -109,21 +109,26 @@ def getTotalPageSizeConcurrently() = {
         }
         for (j <- 1 to filteredUrls.size) {
           receiveWithin(20000) {
-            case (url, size) =>
+            case (url, size: Int) =>
               println("Size for " + url + ": " + size)
+              totalSize = totalSize + size
           }
+          println("Total size for all linked pages: " + totalSize)
         }
     }
   }
 }
 
 def getTotalPageSizeSequencially() = {
-
+  var totalSize = 0
   for (url <- urls) {
     val linkUrls = PageLoader.getListOfLinks(url)
-    linkUrls.filter(link => link.startsWith("http")).foreach(linkUrl => PageLoader.getPageSize(linkUrl))
+    linkUrls.filter(link => link.startsWith("http")).foreach {
+      linkUrl => 
+        totalSize = totalSize + PageLoader.getPageSize(linkUrl)
+    }
   }
-
+  println("Total size: " + totalSize)
 }
 
 // START:concurrent
