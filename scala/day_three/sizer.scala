@@ -1,14 +1,16 @@
-import scala.io._
+import collection.immutable.Range.Int
+import io._
 import scala.actors._
 import Actor._
 
 // START:loader
 object PageLoader {
+  // If you get "MalformedInputException: Input length = 1" then you can change to fromURL(url, Codec.ISO8859.name())
  def getPageSize(url : String) = Source.fromURL(url).mkString.length
 }
 // END:loader
 
-val urls = List("http://www.amazon.com/", 
+val urls = List("http://www.amazon.com/",
                "http://www.twitter.com/",
                "http://www.google.com/",
                "http://www.cnn.com/" )
