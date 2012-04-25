@@ -1,3 +1,4 @@
+import java.io.{IOException, FileNotFoundException}
 import scala.io._
 import scala.actors._
 import Actor._
@@ -5,14 +6,21 @@ import util.matching.Regex.MatchIterator
 
 // START:loader
 object PageLoader {
-
+  //gjwl.href="/search?"+a+"&cad=h";return 1
   // b1 href="http://www.google.se/imghp?hl=sv&tab=wi">Bilder</a> <a class=gb1 href="http:/
   // href="http://www.arla.se" bla bla href="http://www.amazon.com/access"> and som
   // href="/relative/path.html" och lite till href="http://my.com"
   // <link rel="stylesheet" type="text/css" href="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/accessoriesCSS/US/combined-3689044428._V189697042_.css" /><script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/tmmJS/tmmJS-combined-core-65345._V1_.js" />   <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/twister/beta/twister-dpf.cc9fb73adcb35a017570bfa9a4964009._V1_.js"/>  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/cmuAnnotations/cmuAnnotations-cmuAnnotations-49800._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/accessoriesJS/accessoriesJS-accessories-49340._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/lazyLoadLib/lazyLoadLib-lazyLoadLib-1454._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/nav2/gamma/priceformatterJQ/priceformatterJQ-price-21701._V1_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/x-locale/communities/profile/customer-popover/script-13-min._V224617671_.js" />  <script type="text/javascript" src="http://z-ecx.images-amazon.com/images/G/01/x-locale/personalization/yourstore/js/ratings-bar-366177._V204593665_.js" />');
+  //val HREF_REGEXP = """href=\s*\"(\S+)\"""".r
   val HREF_REGEXP = """href=\s*\"(\S+)\"""".r
 
-  def getPageSize(url: String) = Source.fromURL(url).mkString.length
+  def getPageSize(url: String) = try {
+    Source.fromURL(url).mkString.length
+  }
+  catch {
+    case e: FileNotFoundException => 0
+    case e: IOException => 0
+  }
 
   def getNumberOfPageLinks(url: String): Int = {
     val foundMatches: MatchIterator = HREF_REGEXP.findAllIn(Source.fromURL(url).mkString)
@@ -39,6 +47,7 @@ object PageLoader {
 //  "http://www.google.com/",
 //  "http://www.cnn.com/" )
 
+//val urls = List("http://www.google.com/")
 val urls = List("http://www.google.com/")
 
 // START:time
@@ -71,7 +80,7 @@ def getPageSizeConcurrently() = {
   for (i <- 1 to urls.size) {
     receive {
       case (url, size) =>
-        println("Size for " + url + ": " + size)
+        println("Size for " + url +": " + size)
     }
   }
 }
@@ -98,14 +107,23 @@ def getTotalPageSizeConcurrently() = {
               caller !(linkUrl, PageLoader.getPageSize(linkUrl))
             }
         }
-        for (j <- 1 to linkUrls.size) {
-          receive {
+        for (j <- 1 to filteredUrls.size) {
+          receiveWithin(20000) {
             case (url, size) =>
               println("Size for " + url + ": " + size)
           }
         }
     }
   }
+}
+
+def getTotalPageSizeSequencially() = {
+
+  for (url <- urls) {
+    val linkUrls = PageLoader.getListOfLinks(url)
+    linkUrls.filter(link => link.startsWith("http")).foreach(linkUrl => PageLoader.getPageSize(linkUrl))
+  }
+
 }
 
 // START:concurrent
@@ -130,10 +148,14 @@ def getNumberOfLinksInPage() = {
 // START:script
 //PageLoader.getPageLink("http://www.amazon.com")
 println("Sequential run:")
-//timeMethod { getPageSizeSequentially }
+timeMethod { getTotalPageSizeSequencially }
 
 println("Concurrent run")
-getTotalPageSizeConcurrently()
+timeMethod { getTotalPageSizeConcurrently }
+
+println("Sequential run:")
+timeMethod { getTotalPageSizeSequencially }
+
 //PageLoader.getListOfLinks("http://www.amazon.com").foreach(url => println(url))
 //timeMethod { getPageSizeConcurrently }
 // END:script
