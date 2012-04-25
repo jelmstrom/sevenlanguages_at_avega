@@ -92,10 +92,13 @@ def getTotalPageSizeConcurrently() = {
         val filteredUrls = linkUrls.filter(link => link.startsWith("http"))
         println("Recieved: "  + filteredUrls)
         filteredUrls.foreach { linkUrl =>
+          println("Starting new Actor")
           actor { caller ! (linkUrl, PageLoader.getPageSize(linkUrl))}
         }
 
     }
+
+
   }
 }
 
