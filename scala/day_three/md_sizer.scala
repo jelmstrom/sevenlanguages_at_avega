@@ -39,7 +39,6 @@ object PageLoader {
 //  "http://www.google.com/",
 //  "http://www.cnn.com/" )
 
-//val urls = List("http://www.amazon.com/")
 val urls = List("http://www.google.com/")
 
 // START:time
@@ -77,8 +76,6 @@ def getPageSizeConcurrently() = {
   }
 }
 
-case class ListOfUrls(url: String, linkUrls: List[String])
-
 // START:concurrent
 def getTotalPageSizeConcurrently() = {
   val caller = self
@@ -107,10 +104,7 @@ def getTotalPageSizeConcurrently() = {
               println("Size for " + url + ": " + size)
           }
         }
-
     }
-
-
   }
 }
 
