@@ -28,7 +28,7 @@ println("")
 println("Filter with matcher")
 movies \ "_"  foreach {movie =>
               movie match {
-              case value @ <movie>{_*}</movie> if (value \ "@genre").text.equals("action")=> println(value + " " + (value \ "@genre").text)
+              case value @ <movie>{_*}</movie> if (value \ "@genre").text.equals("fairytale")=> println(value.text + " is a " + (value \ "@genre").text)
               case _ =>
              }
           }
