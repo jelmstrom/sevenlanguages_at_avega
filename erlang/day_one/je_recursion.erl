@@ -8,7 +8,8 @@
 %Strings are arrays of ints - useful!!!
 wordcount([]) ->0;  %empty string to start with
 wordcount([32|[]]) -> 0; % trailing spaces are not a word
-wordcount([_|[]]) ->  1; % ends without trailing spaces 
+wordcount([_|[]]) ->  1; % ends without trailing spaces
+ 
 wordcount([32|Tail]) -> wordcount(Tail); % keep recursing until the first character isnt space
 wordcount([_|[32|Tail]]) -> 1+wordcount(Tail); % The tail is teh beginning of a word
 wordcount([_|Tail]) -> wordcount(Tail). % not empty,end or starts with space - keep recursing
