@@ -2,7 +2,7 @@
                         :map
                         (if (= (type #{}) (type colln))
                             :set
-                          (if (= (type '[]) (type colln))
+                          (if (= (type []) (type colln))
                             :list
                             :nollcoll
                           )
