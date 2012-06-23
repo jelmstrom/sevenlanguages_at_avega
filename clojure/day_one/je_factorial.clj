@@ -1,8 +1,5 @@
 
 (defn fact [n] (if (= n 1) n (* n (fact (- n 1))))) 
-(def facts '(1 2 3 4 5))
-
-(def res (map (fn [x] (fact x)) facts))
 
 (defn testfact [n expected] (if (= expected (fact n))
                                  (println "test passed")

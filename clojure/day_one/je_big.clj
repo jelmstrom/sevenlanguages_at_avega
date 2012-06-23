@@ -1,8 +1,8 @@
 (defn big [value len] (> (count value) len) )
 
 (defn testbig [value len expected] (if (= (big value len) expected)
-                                          (println "Test passed")
-                                            (println (str "Test for " value " longer than " len "faled to yield " expected))
+                                        (println "Test passed")
+                                        (println (str "Test for " value " longer than " len "faled to yield " expected))
                                 )
   )
 
