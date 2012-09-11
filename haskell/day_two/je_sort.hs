@@ -28,6 +28,14 @@ merge (left_h:left_t) (right_h:right_t)
  | otherwise = right_h:merge (left_h:left_t) right_t  -- merge all left with rest of right
 
 
+predQuickSort :: Ord a => (a-> a-> Bool) -> [a] ->[a]
+predQuickSort pred [] = []
+predQuickSort pred (head:tail) =
+     let smaller = predQuickSort pred [x | x <- tail, pred x head]
+         bigger =  predQuickSort pred [x | x <- tail, not (pred x head)]
+     in smaller ++ [head] ++ bigger
 
-main = print $ mergeSort [1,2,5,3,7,2,457,37,0,37,3]
+main = print $ predQuickSort (<=) [1,2,5,3,7,2,457,37,0,37,3]
+
+
 
