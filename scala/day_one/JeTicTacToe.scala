@@ -2,7 +2,7 @@ import collection.mutable.{MutableList, LinkedList}
 import scala._
 import scala.Predef._
 
-//Map((1,1)->"X",(1, 2)->"X") filter(_._2 == "X") map(_._1._2)
+//Map((1,1)->"X",(1, 2)->"X") censorText(_._2 == "X") map(_._1._2)
 
 def tokens = List("X", "O")
 var board =  MutableList.fill(9)(" ")
@@ -25,7 +25,7 @@ while(!gameOver(board)) {
  }
 
 def gameOver(board: MutableList[String]) : Boolean = {
-  boardFull(board) || horizontalWin(board)  || diagonalWin(board) || verticalWin(board)
+  boardFull(board) || horizontalWin(board)  || diagonalWin(board) ||  verticalWin(board)
 }
 
 def verticalWin(board: MutableList[String]): Boolean = {
@@ -52,7 +52,6 @@ def sameMarkers(row: MutableList[String]): Boolean = {
 }
 def horizontalWin(board: MutableList[String]) : Boolean = {
   var rows = board grouped(3)
-
   rows foreach {
     row =>
       if(sameMarkers(row)){

@@ -3,6 +3,19 @@ list_chunk(_ ,0, _,[]).
 list_chunk([Head|Tail],Size,Temp,[Head|Acc]):-
 	Y is Size-1, 
 	list_chunk(Tail,Y,Temp,Acc).
+
+
+list_chunks([Head|Tail],Size,Pos,All) :-
+		Md is Pos mod Size,
+		Next is Pos+1,
+		Md =< 0-> list_chunk([Head|Tail],Size,Total);
+		      list_chunks(Tail,Size,Next,All),	 
+		write(All).
+		
+	
+	
+rows(0,[]).
+rows(Size,Rows):- Sz is Size-1,rows(Sz,[[]|Rows]).
 	 
 		
 		
