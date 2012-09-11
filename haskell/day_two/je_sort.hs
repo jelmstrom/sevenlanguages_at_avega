@@ -35,7 +35,7 @@ predQuickSort pred (head:tail) =
          bigger =  predQuickSort pred [x | x <- tail, not (pred x head)]
      in smaller ++ [head] ++ bigger
 
-main = print $ predQuickSort (<=) [1,2,5,3,7,2,457,37,0,37,3]
+main = print $ predQuickSort (<=) [100,2,5,3,7,2,457,37,0,7,3]
 
 
 
